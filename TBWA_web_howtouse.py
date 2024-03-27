@@ -45,7 +45,7 @@ st.sidebar.markdown('<a href="#03-6" style="margin-left: 20px; color: #636061; t
 st.sidebar.divider()
 st.sidebar.markdown("""
     <div style="display: flex; justify-content: space-between;">
-        <a href="" style="color: #666666; text-decoration: none; font-size: 12px;">📈웹사이트 바로가기</a>
+        <a href="https://comment-generate-dashboard.streamlit.app/" style="color: #666666; text-decoration: none; font-size: 12px;">📈웹사이트 바로가기</a>
         <a href="" style="color: #666666; text-decoration: none; font-size: 12px;">💁‍♀️제작자 정보</a>
     </div>
 """, unsafe_allow_html=True)
