@@ -438,7 +438,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # 사이드바
-st.sidebar.image("../data/logo.png", use_column_width=True)
+st.sidebar.image("data/logo.png", use_column_width=True)
 st.sidebar.divider()
 st.sidebar.markdown('<a href="#00" style="color: #FB5B5B; text-decoration: none; font-weight: bold; font-size: 18px;">❑ Data Load</a>', unsafe_allow_html=True)
 st.sidebar.markdown('<a href="#03" style="color: #FB5B5B; text-decoration: none; font-weight: bold; font-size: 18px;">❑ Daily Trend Data</a>', unsafe_allow_html=True)
@@ -470,10 +470,10 @@ with st.container():
         
     else:
         date_list=[]  
-        preprocessed_data = load_data('../data/sample_4월_데일리 리포트_fin.xlsx')
+        preprocessed_data = load_data('data/sample_4월_데일리 리포트_fin.xlsx')
         main_data=preprocessed_data[DATA_COLIMNS]
         date_list = get_date_list_from_dataframe(main_data)
-        Company = READ_COMPANY('../data/sample_4월_데일리 리포트_fin.xlsx')
+        Company = READ_COMPANY('data/sample_4월_데일리 리포트_fin.xlsx')
         st.write("파일 입력")
     
     date_selection,media_goods,media_types=st.columns(3)
