@@ -1,5 +1,11 @@
 import streamlit as st
 
+st.set_page_config(
+    page_title="How to use",
+    #layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 st.markdown("""
     <style>
     .big-title {
@@ -46,7 +52,7 @@ st.sidebar.divider()
 st.sidebar.markdown("""
     <div style="display: flex; justify-content: space-between;">
         <a href="https://comment-generate-dashboard.streamlit.app/" style="color: #666666; text-decoration: none; font-size: 12px;">📈웹사이트 바로가기</a>
-        <a href="" style="color: #666666; text-decoration: none; font-size: 12px;">💁‍♀️제작자 정보</a>
+        <a href="https://comment-generate-dashboard-developer.streamlit.app/" style="color: #666666; text-decoration: none; font-size: 12px;">💁‍♀️제작자 정보</a>
     </div>
 """, unsafe_allow_html=True)
 
@@ -87,19 +93,24 @@ code = '''
 📍 데이터 형식: 엑셀(xlsx)
 
 📍 엑셀 데이터 요구사항:
-    ‣ 파일 내에 raw data가 정리된 sheet가 마지막 sheet로 존재한다.
+    ‣ 파일 내에 raw data(광고raw)가 마지막 sheet로 존재한다.
     ‣ raw data sheet의 첫 행에 컬럼명이 입력되어 있어야 한다.
     ‣ raw data는 결측치(빈칸)가 없도록 처리한다.
     ‣ raw data의 필수 컬럼명:
         '일','매체','광고유형','광고상품','Campaign','노출', '클릭', '광고비(콘솔)',
         '광고비(VAT별도)', '유입수', '방문자수', '신규방문','예금_상담후결제', '예금_즉시결제', 
         '대출','심사수', '승인수', '접수수', '예금+대출’
+    ‣ Summary_Total sheet에 캠페인명이 존재한다.
 
 📍 사이트 유의사항:
     ‣ 오류 발생시 사이트를 새로고침 해본다.
     ‣ 달성률 입력창에는 음수를 입력하지 않는다.
 '''
 st.code(code, language='XML')
+
+st.image('data/raw-data.png', caption='파일 내에 raw data(광고raw)가 마지막 sheet로 존재')
+st.image('data/summary-total.png', caption='Summary_Total sheet에 캠페인명이 존재')
+
 
 st.markdown('<p class="l" id="">l', unsafe_allow_html=True)
 st.markdown('<p class="l" id="">l', unsafe_allow_html=True)
@@ -140,6 +151,6 @@ st.image('data/8.png', caption='')
 st.markdown('<p class="general-text" style="margin-left: 40px;">📌 코멘트 생성 버튼을 클릭하면 잠시 후 하단에 선택 일자의 코멘트가 생성됩니다.</p>', unsafe_allow_html=True)
 st.image('data/9.png', caption='')
 
-st.header('Q&A / 연락처')
+st.header('Q&A')
 st.write('궁금한 점이 있으시다면, 아래 이메일로 문의해 주세요.')
-st.write('이메일: 22000282@handong.ac.kr')
+st.write('E-mail: p0717p@gmail.com')
