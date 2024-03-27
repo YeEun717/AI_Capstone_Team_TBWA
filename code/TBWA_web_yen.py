@@ -9,7 +9,6 @@ from datetime import date, datetime, timedelta
 from langchain.chat_models import ChatOpenAI
 import copy
 import os
-import pyperclip
 
 #########################
 # Functions
@@ -448,10 +447,10 @@ with st.container():
         main_data=preprocessed_data[DATA_COLIMNS]
         date_list = get_date_list_from_dataframe(main_data)
         
-    else:
-        preprocessed_data = load_data('../data/sample_4월_데일리 리포트_fin.xlsx')
-        main_data=preprocessed_data[DATA_COLIMNS]
-        date_list = get_date_list_from_dataframe(main_data)
+    # else:
+    #     preprocessed_data = load_data('../data/sample_4월_데일리 리포트_fin.xlsx')
+    #     main_data=preprocessed_data[DATA_COLIMNS]
+    #     date_list = get_date_list_from_dataframe(main_data)
     
     date_selection,media_goods,media_types=st.columns(3)
     
