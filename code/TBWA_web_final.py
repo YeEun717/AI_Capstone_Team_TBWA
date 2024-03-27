@@ -9,7 +9,6 @@ from datetime import date, datetime, timedelta
 from langchain.chat_models import ChatOpenAI
 import copy
 import os
-import pyperclip
 
 #########################
 # Functions
