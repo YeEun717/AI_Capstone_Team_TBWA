@@ -9,6 +9,7 @@ from datetime import date, datetime, timedelta
 from langchain.chat_models import ChatOpenAI
 import copy
 import os
+import pyperclip
 
 #########################
 # Functions
@@ -37,6 +38,18 @@ def READ_EXCEL(excel_location):
 
     return PROCESSED_DF
 
+def READ_COMPANY(excel_location):
+    """
+    엑셀의 'Summary_Total' 시트에서 회사명을 뽑기 위한 함수
+
+    """
+    SUMMARY_TOTAL_SHEET=pd.read_excel(excel_location, sheet_name='Summary_Total')
+    SUMMARY_TOTAL_SHEET.dropna(axis=0,how='all',inplace=True)
+    SUMMARY_TOTAL_SHEET.dropna(axis=1,how='all',inplace=True)
+    COMPANY_NAME=SUMMARY_TOTAL_SHEET[SUMMARY_TOTAL_SHEET[SUMMARY_TOTAL_SHEET.columns[0]]=='캠페인명'].iloc[0,1]
+    
+
+    return COMPANY_NAME
 
 def DIVISION_INDICATORS(row):
     """
@@ -139,7 +152,6 @@ def ORGANIZE_RAW_DATA(PROCESSED_DF):
     ARRANGED_DF.drop(columns='index', inplace=True)
 
     return(ARRANGED_DF)
-
 
 def get_campaigns_for_media(media, dataframe):
     """
@@ -384,28 +396,30 @@ st.set_page_config(
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="expanded",
-    menu_items={
-        'Get Help': 'https://www.extremelycoolapp.com/help',
-        'About': "# This is a header. This is an *extremely* cool app!"
-    }
+    # menu_items={
+    #     'Get Help': 'https://www.extremelycoolapp.com/help',
+    #     'About': "# This is a header. This is an *extremely* cool app!"
+    # }
 )
 
-# 상단바 
-
-# # 상단 헤더 HTML 코드
-# header_html = """
-#     <div style="background-color: #fed000ff; padding: 10px; text-align: center;">
-#         <h1 style="color: black; margin-bottom: 0;">데이터 대시보드</h1>
-#         <p style="color: white; margin-top: 0;">제목!</p>
-#     </div>
-# """
-
-# # 상단 헤더를 웹 페이지에 추가
-# st.markdown(header_html, unsafe_allow_html=True)
-
-st.title("Daily Comment Dashboard")
-
-#st.divider()
+# 상단 여백을 줄이는 CSS 추가
+st.markdown("""
+    <style>
+    /* 앱의 최상단 여백 제거 */
+    .block-container {
+        padding-top: 0rem;
+    }
+    /* Streamlit 로고와 메뉴 버튼 간의 여백 조정 */
+    .css-18e3th9 {
+        padding-top: 0rem;
+        padding-bottom: 0rem;
+    }
+    /* 페이지 제목과 상단의 여백 조정 */
+    .stApp {
+        padding-top: 0rem;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 st.markdown("""
     <style>
@@ -434,6 +448,12 @@ st.sidebar.markdown('<a href="#02" style="color: #FB5B5B; text-decoration: none;
 st.sidebar.markdown('<a href="#04" style="color: #FB5B5B; text-decoration: none; font-weight: bold; font-size: 18px;">❑ 전일 비교 Trend</a>', unsafe_allow_html=True)
 st.sidebar.markdown('<a href="#05" style="color: #FB5B5B; text-decoration: none; font-weight: bold; font-size: 18px;">❑ Comment</a>', unsafe_allow_html=True)
 st.sidebar.divider()
+st.sidebar.markdown("""
+    <div style="display: flex; justify-content: space-between;">
+        <a href="" style="color: #666666; text-decoration: none; font-size: 12px;">❓How to use</a>
+        <a href="" style="color: #666666; text-decoration: none; font-size: 12px;">💁‍♀️제작자 정보</a>
+    </div>
+""", unsafe_allow_html=True)
 
 with st.container(): 
     
@@ -443,18 +463,24 @@ with st.container():
     uploaded_file = st.file_uploader("‣ 파일 업로드")
 
     if uploaded_file is not None:
+        date_list=[]  
         preprocessed_data = load_data(uploaded_file)
         main_data=preprocessed_data[DATA_COLIMNS]
         date_list = get_date_list_from_dataframe(main_data)
+        Company = READ_COMPANY(uploaded_file)
         
-    # else:
-    #     preprocessed_data = load_data('../data/sample_4월_데일리 리포트_fin.xlsx')
-    #     main_data=preprocessed_data[DATA_COLIMNS]
-    #     date_list = get_date_list_from_dataframe(main_data)
+    else:
+        date_list=[]  
+        preprocessed_data = load_data('../data/sample_4월_데일리 리포트_fin.xlsx')
+        main_data=preprocessed_data[DATA_COLIMNS]
+        date_list = get_date_list_from_dataframe(main_data)
+        Company = READ_COMPANY('../data/sample_4월_데일리 리포트_fin.xlsx')
+        st.write("파일 입력")
     
     date_selection,media_goods,media_types=st.columns(3)
     
-    with date_selection:    
+    with date_selection:
+          
         date_setting = st.date_input("‣ 시작일 - 종료일",list([date_list[0],date_list[-1]]),key='day_setting',max_value=(date_list[-1]),min_value=(date_list[0]))
         date_setting_list=generate_date_list(date_setting[0],date_setting[-1],timedelta(days=1))
         
@@ -489,11 +515,9 @@ DailyTrend_container = st.container(border=True)
 DailyTrend_container.write(specific_df)
 
 # [Campaign Information]
-Company = 'A' # 수정: 회사 설정 필요 
 st.markdown('<p class="small-title" id="01" style="color: #FFFFFF;">l', unsafe_allow_html=True)
 st.markdown('<p class="small-title">❑ Campaign Information : {}년 {}월 </p>'.format(date_setting[0].year, date_setting[0].month), unsafe_allow_html=True)
-st.markdown('<p class="general-text" style="margin-bottom: 3px;"><strong>‣ 캠페인명:</strong> {}사 {}월 캠페인</p>'.format(Company, date_setting[0].month), unsafe_allow_html=True)
-st.markdown('<p class="general-text" style="margin-bottom: 3px;"><strong>‣ 운영일자:</strong>  {}/{}/{}</p>'.format(date_setting[0].year, date_setting[0].month, date_setting[0].day), unsafe_allow_html=True) # 수정: 날짜 변경 필요
+st.markdown('<p class="general-text" style="margin-bottom: 3px;"><strong>‣ 캠페인명:</strong> {}</p>'.format(Company), unsafe_allow_html=True)
 st.markdown('<p class="general-text" style="margin-bottom: 3px;"><strong>‣ 캠페인 시작일:</strong>  {}/{}/{}</p>'.format(date_setting[0].year, date_setting[0].month, date_setting[0].day), unsafe_allow_html=True)
 st.markdown('<p class="general-text" style="margin-bottom: 3px;"><strong>‣ 캠페인 종료일:</strong>  {}/{}/{}</p>'.format(date_setting[-1].year, date_setting[-1].month, date_setting[-1].day), unsafe_allow_html=True)
 st.write(" ")
@@ -531,7 +555,7 @@ with KPI:
 
     # KPI 달성 bar 그레프
     KPI_container = st.container(border=True)
-    KPI_container.write("[KPI 달성율]")
+    KPI_container.write("[KPI 달성률]")
     
     base = alt.Chart(KPI_DF).mark_bar().encode(
         alt.X("value:Q").title("달성률 (%)"),
@@ -644,8 +668,8 @@ with compare_container:
     comment_date = col1.selectbox('‣ 비교 기준 일자', comment_date_list, key="comment_date")
 
     c_data = calculate_variation(main_data, comment_date, media_type)
-    min_value = c_data['values'].min() - 30  # 약간의 여백을 주기 위해 10을 뺌
-    max_value = c_data['values'].max() + 30  # 약간의 여백을 주기 위해 10을 더함
+    min_value = c_data['values'].min() - 50
+    max_value = c_data['values'].max() + 50
 
     c_chart_b = alt.Chart(c_data).mark_bar().encode(
     x=alt.X("index", axis=alt.Axis(title="상세 지표")),
